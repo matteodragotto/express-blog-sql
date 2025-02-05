@@ -14,11 +14,27 @@ const show = (req, res) => {
   const id = req.params.id
   const sql = 'SELECT * FROM posts WHERE id = ?'
 
+  const sqlTags = `
+  SELECT * 
+  FROM tags
+  JOIN post_tag ON tags.id = post_tag.tag_id 
+  WHERE post_tag.post_id = ?
+  `
+
   connection.query(sql, [id], (err, results) => {
     if (err) return res.status(500).json({ error: 'Richiesta al database fallita' })
-    res.json(results)
-  })
 
+    if (results.length === 0) return res.status(404).json({ error: 'Post non trovato' })
+
+    let post = results[0]
+
+    connection.query(sqlTags, [id], (err, tagsResults) => {
+      if (err) return res.status(500).json({ error: 'Richiesta al database fallita' })
+      post.tags = tagsResults
+      res.json(post)
+
+    })
+  })
 }
 
 const store = (req, res) => {
