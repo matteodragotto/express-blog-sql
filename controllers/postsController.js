@@ -27,7 +27,13 @@ const modify = (req, res) => {
 }
 
 const destroy = (req, res) => {
-  res.send('Rimuovo un post')
+  const id = req.params.id
+  const sql = 'DELETE FROM posts WHERE posts.id = ?'
+
+  connection.query(sql, [id], (err) => {
+    if (err) return res.status(500).json({ error: 'Non è stato possibile eliminare il post' })
+    res.sendStatus(204)
+  })
 }
 
 module.exports = {
