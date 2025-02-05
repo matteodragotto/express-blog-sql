@@ -11,7 +11,14 @@ const index = (req, res) => {
 }
 
 const show = (req, res) => {
-  res.send('Mostro un post')
+  const id = req.params.id
+  const sql = 'SELECT * FROM posts WHERE id = ?'
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Richiesta al database fallita' })
+    res.json(results)
+  })
+
 }
 
 const store = (req, res) => {
@@ -19,11 +26,13 @@ const store = (req, res) => {
 }
 
 const update = (req, res) => {
-  res.send('Modifico un post')
+  const id = req.params.id
+  res.send(`Modifico il post con id ${id}`)
 }
 
 const modify = (req, res) => {
-  res.send('Modifico un post')
+  const id = req.params.id
+  res.send(`Modifico il post con id ${id}`)
 }
 
 const destroy = (req, res) => {
